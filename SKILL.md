@@ -29,22 +29,29 @@ skills/zju-beamer/resources/
     └── logo.pdf            # ZJU 校徽矢量图
 ```
 
-## 使用步骤
+## 使用步骤（全自动，AI 必须自行完成以下所有步骤）
 
-### Step 1: 创建项目目录并复制模板资源
+> **重要**：以下所有步骤必须由 AI agent 自动执行，用户不需要手动复制任何文件。
+> `SKILL_DIR` 指本 SKILL.md 所在目录的绝对路径。
+> `TARGET_DIR` 默认为用户工作区下的 `presentation/`，用户可指定其他路径。
 
+### Step 1: 自动创建目录并复制模板资源（必须用 run_command 执行）
+
+// turbo
 ```bash
-# 在用户工作目录下创建 presentation 文件夹
-mkdir -p <target_dir>/figures
+SKILL_DIR="<this skill's absolute directory path>"
+TARGET_DIR="<user workspace>/presentation"
 
-# 复制模板资源
-cp skills/zju-beamer/resources/zju_beamer.sty <target_dir>/
-cp skills/zju-beamer/resources/figures/* <target_dir>/figures/
+mkdir -p "$TARGET_DIR/figures"
+cp "$SKILL_DIR/resources/zju_beamer.sty" "$TARGET_DIR/"
+cp "$SKILL_DIR/resources/figures/"* "$TARGET_DIR/figures/"
 ```
 
-### Step 2: 创建 main.tex
+**注意**：AI 需要自动推算 `SKILL_DIR` 的绝对路径（即 SKILL.md 所在目录），不要让用户手动操作。
 
-使用下面的模板结构创建 `main.tex`。根据用户需求填充内容。
+### Step 2: 生成 main.tex（使用 write_to_file 工具）
+
+根据用户提供的内容，基于下面的模板骨架生成 `main.tex`，写入 `TARGET_DIR/main.tex`。
 
 ```latex
 %# -*- coding:utf-8 -*-
@@ -67,7 +74,7 @@ cp skills/zju-beamer/resources/figures/* <target_dir>/figures/
 \definecolor{SuccessGreen}{HTML}{22C55E}
 \definecolor{ZJUBlue}{RGB}{0,63,136}
 
-% 标题页信息
+% 标题页信息 — 根据用户需求填写
 \title[短标题]{完整标题}
 \subtitle{副标题}
 \author[短名]{作者名}
@@ -87,16 +94,9 @@ cp skills/zju-beamer/resources/figures/* <target_dir>/figures/
     \tableofcontents
 \end{frame}
 
-% === 正文内容 ===
-
-\section{章节名}
-
-\begin{frame}{页面标题}
-    内容...
-\end{frame}
+% === 在这里根据用户内容生成 \section 和 \begin{frame}...\end{frame} ===
 
 % === 结束页 ===
-
 \begin{frame}
     \begin{center}
         \vspace{2cm}
@@ -109,20 +109,22 @@ cp skills/zju-beamer/resources/figures/* <target_dir>/figures/
 \end{document}
 ```
 
-### Step 3: 编译
+### Step 3: 自动编译（必须用 run_command 执行）
 
-必须使用 **XeLaTeX** 编译（因为中文支持）：
-
+// turbo
 ```bash
-cd <target_dir>
+cd "$TARGET_DIR"
 xelatex -interaction=nonstopmode main.tex
-xelatex -interaction=nonstopmode main.tex   # 第二次确保目录正确
+xelatex -interaction=nonstopmode main.tex
 ```
 
-### Step 4: 打开预览
+必须使用 **XeLaTeX**（不能用 pdflatex），编译两次确保目录和导航正确。
 
+### Step 4: 自动打开预览
+
+// turbo
 ```bash
-open main.pdf
+open "$TARGET_DIR/main.pdf"
 ```
 
 ## 常用 Beamer 语法速查
